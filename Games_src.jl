@@ -1,7 +1,6 @@
 using Pkg
 Pkg.activate(".")
 Pkg.instantiate()
-# using Revise
 using LazySets, Optim, Plots, Polyhedra
 import LinearAlgebra: I
 import GLMakie
