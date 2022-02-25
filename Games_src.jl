@@ -3,7 +3,7 @@ Pkg.activate(".")
 Pkg.instantiate()
 using LazySets, Optim, Plots, Polyhedra
 import LinearAlgebra: I
-import GLMakie
+# import GLMakie
 
 
 # STRUCTURE AND CONSTRUCTORS:
