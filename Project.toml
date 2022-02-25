@@ -1,6 +1,5 @@
 [deps]
 Debugger = "31a5f54b-26ea-5ae9-a837-f05ce5417438"
-GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
 LazySets = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Optim = "429524aa-4258-5aef-a3af-852621145aeb"

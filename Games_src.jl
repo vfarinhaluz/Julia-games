@@ -5,6 +5,7 @@ using LazySets, Optim, Plots, Polyhedra
 import LinearAlgebra: I
 import GLMakie
 
+
 # STRUCTURE AND CONSTRUCTORS:
 
 struct NormalForm
