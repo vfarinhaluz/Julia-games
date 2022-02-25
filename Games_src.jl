@@ -3,7 +3,7 @@ Pkg.activate(".")
 Pkg.instantiate()
 using LazySets, Optim, Plots, Polyhedra
 import LinearAlgebra: I
-# import GLMakie
+# import GLMakie # Needs to be activated to run 3D plots. Doesn't run with binder
 
 
 # STRUCTURE AND CONSTRUCTORS:
