@@ -2,8 +2,6 @@ using Pkg
 Pkg.activate(".")
 Pkg.instantiate()
 
-
-
 module NormalForms
 using LazySets, Optim, Plots, Polyhedra
 import LinearAlgebra: I
