@@ -7,7 +7,7 @@ using LazySets, Optim, Plots, Polyhedra
 import LinearAlgebra: I
 import GLMakie # Needs to be activated to run 3D plots. Doesn't run with binder
 
-export NormalForm, randomNormalForm, plotall2, plotFeasible3
+export NormalForm, randomNormalForm, plotall2, plotFeasible3, miniMaxProfile
 
 # STRUCTURE AND CONSTRUCTORS:
 
