@@ -1,10 +1,14 @@
 using Pkg
 Pkg.activate(".")
 Pkg.instantiate()
-using LazySets, Optim, Plots, Polyhedra
-import LinearAlgebra: I
+
 # import GLMakie # Needs to be activated to run 3D plots. Doesn't run with binder
 
+module NormalForms
+using LazySets, Optim, Plots, Polyhedra
+import LinearAlgebra: I
+
+export NormalForm, randomNormalForm, plotall2, plotFeasible3
 
 # STRUCTURE AND CONSTRUCTORS:
 
@@ -28,7 +32,7 @@ function NormalForm(normalFormTable::Array{<:Tuple})
     nmoves=size(normalFormTable)
 
     payoffmatlist=ntuple(
-        i -> [normalTable[k][i] for k in CartesianIndices(normalFormTable)],
+        i -> [normalFormTable[k][i] for k in CartesianIndices(normalFormTable)],
         nplayers
     )
 
@@ -38,17 +42,17 @@ end
 function randomNormalForm(nMovesList::Tuple{Vararg{<:Real}})
     nplayers=length(nMovesList)
     payoffmatlist= Tuple(rand(Float64, nMovesList) for i in 1:nplayers)
-    
+    nform=NormalForm(nplayers, nMovesList, payoffmatlist);
     display("The payoff table(s) for the random game is:")
     display(
     [
     round.(
-    Tuple(normalform.payoffMatList[k][i] for k in 1:normalform.nPlayers),
+    Tuple(nform.payoffMatList[k][i] for k in 1:nform.nPlayers),
     digits=2)
-    for i in CartesianIndices(normalform.payoffMatList[1])
+    for i in CartesianIndices(nform.payoffMatList[1])
     ],
     )
-    return NormalForm(nplayers, nMovesList, payoffmatlist);
+    return nform;
 end
 
 #CALCULATING VALUES
@@ -194,3 +198,5 @@ function plotFeasible3(normalform::NormalForm)
     )
     return fig
 end;
+
+end
