@@ -1,10 +1,13 @@
-using Pkg
-Pkg.activate(".")
-Pkg.instantiate()
+# using Pkg
+# Pkg.activate(".")
+# Pkg.instantiate()
+
+module NormalForms
 using LazySets, Optim, Plots, Polyhedra
 import LinearAlgebra: I
-# import GLMakie # Needs to be activated to run 3D plots. Doesn't run with binder
+import GLMakie # Needs to be activated to run 3D plots. Doesn't run with binder
 
+export NormalForm, randomNormalForm, plotall2, plotFeasible3, miniMaxProfile
 
 # STRUCTURE AND CONSTRUCTORS:
 
@@ -28,7 +31,7 @@ function NormalForm(normalFormTable::Array{<:Tuple})
     nmoves=size(normalFormTable)
 
     payoffmatlist=ntuple(
-        i -> [normalTable[k][i] for k in CartesianIndices(normalFormTable)],
+        i -> [normalFormTable[k][i] for k in CartesianIndices(normalFormTable)],
         nplayers
     )
 
@@ -38,17 +41,17 @@ end
 function randomNormalForm(nMovesList::Tuple{Vararg{<:Real}})
     nplayers=length(nMovesList)
     payoffmatlist= Tuple(rand(Float64, nMovesList) for i in 1:nplayers)
-    
-    display("The payoff table(s) for the random game is:")
+    nform=NormalForm(nplayers, nMovesList, payoffmatlist);
+    println("The payoff table(s) for the random game is:")
     display(
     [
     round.(
-    Tuple(normalform.payoffMatList[k][i] for k in 1:normalform.nPlayers),
+    Tuple(nform.payoffMatList[k][i] for k in 1:nform.nPlayers),
     digits=2)
-    for i in CartesianIndices(normalform.payoffMatList[1])
+    for i in CartesianIndices(nform.payoffMatList[1])
     ],
     )
-    return NormalForm(nplayers, nMovesList, payoffmatlist);
+    return nform;
 end
 
 #CALCULATING VALUES
@@ -68,7 +71,9 @@ function pureMinMax2(normalform::NormalForm)
         ),
         dims=1
     )
-    return [pure_mm1[1], pure_mm2[1]]
+    pureMMprofile=[pure_mm1[1], pure_mm2[1]]
+    println("The pure minimax profile of this game is: ", round.(pureMMprofile,digits=2))
+    return pureMMprofile
 end
 
 function brCorrelatMix(normalform::NormalForm,player::Int64,corrMix::Vector)
@@ -91,8 +96,13 @@ function miniMax_i(normalform::NormalForm, player::Int64)
     return solution.minimum
 end
 
-function miniMaxProfile(normalform::NormalForm)
-    return [miniMax_i(normalform, i) for i=1:normalform.nPlayers]
+function miniMaxProfile(normalform::NormalForm, verbose::Bool =false)
+    mmProfile=[miniMax_i(normalform, i) for i=1:normalform.nPlayers]
+    if verbose
+    println("The minimax profile of this game is: ",
+            round.(mmProfile,digits=2))
+    end
+    return mmProfile
 end
 
 function greaterThanSet(minPoint::Vector{<:Real})::HPolyhedron
@@ -103,6 +113,14 @@ function greaterThanSet(minPoint::Vector{<:Real})::HPolyhedron
 end
 
 #PLOTTING
+
+function newplot2()
+    p=plot(
+        xlabel="Payoff player 1",
+        ylabel="Payoff player 2",
+        title="Normal Form Payoffs"
+    )
+end
 
 function plotFeasible2!(p,normalform::NormalForm)
     payoff1=normalform.payoffMatList[1]
@@ -115,8 +133,6 @@ function plotFeasible2!(p,normalform::NormalForm)
     feasible = VPolygon(payoff_points)
     Plots.plot!(p,
         feasible,
-        xlabel="Payoff player 1",
-        ylabel="Payoff player 2",
         label="Feasible set"
     );
     
@@ -128,7 +144,7 @@ function plotFeasible2!(p,normalform::NormalForm)
 end
 
 function plotFeasible2(normalform::NormalForm)
-    p=Plots.plot(title="Normal Form Payoffs")
+    p=newplot2()
     plotFeasible2!(p,normalform)
     display(p)
     return p
@@ -194,3 +210,5 @@ function plotFeasible3(normalform::NormalForm)
     )
     return fig
 end;
+
+end
