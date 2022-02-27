@@ -1,6 +1,6 @@
-using Pkg
-Pkg.activate(".")
-Pkg.instantiate()
+# using Pkg
+# Pkg.activate(".")
+# Pkg.instantiate()
 
 module NormalForms
 using LazySets, Optim, Plots, Polyhedra
@@ -42,7 +42,7 @@ function randomNormalForm(nMovesList::Tuple{Vararg{<:Real}})
     nplayers=length(nMovesList)
     payoffmatlist= Tuple(rand(Float64, nMovesList) for i in 1:nplayers)
     nform=NormalForm(nplayers, nMovesList, payoffmatlist);
-    display("The payoff table(s) for the random game is:")
+    println("The payoff table(s) for the random game is:")
     display(
     [
     round.(
@@ -71,7 +71,9 @@ function pureMinMax2(normalform::NormalForm)
         ),
         dims=1
     )
-    return [pure_mm1[1], pure_mm2[1]]
+    pureMMprofile=[pure_mm1[1], pure_mm2[1]]
+    println("The pure minimax profile of this game is: ", round.(pureMMprofile,digits=2))
+    return pureMMprofile
 end
 
 function brCorrelatMix(normalform::NormalForm,player::Int64,corrMix::Vector)
@@ -94,8 +96,13 @@ function miniMax_i(normalform::NormalForm, player::Int64)
     return solution.minimum
 end
 
-function miniMaxProfile(normalform::NormalForm)
-    return [miniMax_i(normalform, i) for i=1:normalform.nPlayers]
+function miniMaxProfile(normalform::NormalForm, verbose::Bool =false)
+    mmProfile=[miniMax_i(normalform, i) for i=1:normalform.nPlayers]
+    if verbose
+    println("The minimax profile of this game is: ",
+            round.(mmProfile,digits=2))
+    end
+    return mmProfile
 end
 
 function greaterThanSet(minPoint::Vector{<:Real})::HPolyhedron
@@ -106,6 +113,14 @@ function greaterThanSet(minPoint::Vector{<:Real})::HPolyhedron
 end
 
 #PLOTTING
+
+function newplot2()
+    p=plot(
+        xlabel="Payoff player 1",
+        ylabel="Payoff player 2",
+        title="Normal Form Payoffs"
+    )
+end
 
 function plotFeasible2!(p,normalform::NormalForm)
     payoff1=normalform.payoffMatList[1]
@@ -118,8 +133,6 @@ function plotFeasible2!(p,normalform::NormalForm)
     feasible = VPolygon(payoff_points)
     Plots.plot!(p,
         feasible,
-        xlabel="Payoff player 1",
-        ylabel="Payoff player 2",
         label="Feasible set"
     );
     
@@ -131,7 +144,7 @@ function plotFeasible2!(p,normalform::NormalForm)
 end
 
 function plotFeasible2(normalform::NormalForm)
-    p=Plots.plot(title="Normal Form Payoffs")
+    p=newplot2()
     plotFeasible2!(p,normalform)
     display(p)
     return p
