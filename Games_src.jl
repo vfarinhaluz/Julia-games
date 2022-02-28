@@ -5,7 +5,7 @@
 module NormalForms
 using LazySets, Optim, Plots, Polyhedra
 import LinearAlgebra: I
-import GLMakie # Needs to be activated to run 3D plots. Doesn't run with binder
+# import GLMakie # Needs to be activated to run 3D plots. Doesn't run with binder
 
 export NormalForm, randomNormalForm, plotall2, plotFeasible3, miniMaxProfile
 
@@ -42,7 +42,7 @@ function randomNormalForm(nMovesList::Tuple{Vararg{<:Real}})
     nplayers=length(nMovesList)
     payoffmatlist= Tuple(rand(Float64, nMovesList) for i in 1:nplayers)
     nform=NormalForm(nplayers, nMovesList, payoffmatlist);
-    println("The payoff table(s) for the random game is:")
+    display("The payoff table(s) for the random game is:")
     display(
     [
     round.(
@@ -169,9 +169,7 @@ function plotMinimax2!(p::Plots.Plot, normalform::NormalForm)
 end
 
 function plotall2(normalform::NormalForm)
-    p=plot(
-        title="Normal form payoffs"
-        )
+    p=newplot2()
     plotFeasible2!(p,normalform)
     plotIR_Set2!(p,normalform)
     plotMinimax2!(p,normalform)
