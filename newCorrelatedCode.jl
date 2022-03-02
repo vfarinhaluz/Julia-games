@@ -83,7 +83,14 @@ function CorrEqPolytope(normalform::NormalForm)
     return SetofActionDistributions(probSet ∩ IC1_Set ∩ IC2_Set, normalform ) 
 end
 
+function CorrEquilibriumPayoffs(normalform::NormalForm)
+    payoffMat=[
+        normalform.payoffMatList[1][:]';
+        normalform.payoffMatList[2][:]'
+    ]
 
+    return payoffMat * CorrEqPolytope(normalform::NormalForm).S
+end
 
 #= TO DO:
 - Complete matrix to check deviations of player 1
