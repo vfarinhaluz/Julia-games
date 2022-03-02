@@ -1,13 +1,4 @@
-
-#= To do:
-- Polyhedron with prob restrictions
-- Polyhedron with incentive A
-- Polyhedron with incentive Bool
-- Intersection of three
-- linear projection
-- plot
- =#
-
+# Uses LazySets to calculate correlated equilibria payoffs (to be added to main module)
 
 export plotCorrelated, CorrEquilibriumPayoffs
 
@@ -21,14 +12,14 @@ struct SetofActionDistributions
 
 end
 
+# Polytope of probabilities
 function PolyhedronProbConstraints(normalform::NormalForm)::SetofActionDistributions
     dimension=prod(normalform.nMoves)
     P0=VPolytope( Matrix{Float64}(I,dimension, dimension) )
     return SetofActionDistributions(P0, normalform)
 end
 
-#    KEY MATRICES
-#= This section construct matrices that can be multiplied by vector of probabilities to calculate payoffs from deviations =#
+# Polytope of incentive compatibility for player 1
 
 function matrixCalcPayoff1(recommended::Int64, deviation::Int64, normalform::NormalForm)
     payoff1=normalform.payoffMatList[1]
@@ -51,7 +42,7 @@ function polyhedronIC_1(normalform::NormalForm)
     return SetofActionDistributions(HPolytope(halfSpaceVector), normalform) 
 end
 
-### IC Player 2
+# Polytope of incentive compatibility for player 2
 
 function matrixCalcPayoff2(recommended::Int64, deviation::Int64, normalform::NormalForm)
     payoff2=normalform.payoffMatList[2]
@@ -74,8 +65,7 @@ function polyhedronIC_2(normalform::NormalForm)
     return SetofActionDistributions(HPolytope(halfSpaceVector), normalform)  
 end
 
-
-### Correlated Equilibrium polytopes
+### Correlated Equilibrium polytopes (Intersection of three above)
 
 function CorrEqPolytope(normalform::NormalForm)
     probSet=PolyhedronProbConstraints(normalform).S
@@ -103,7 +93,3 @@ function plotCorrelated(normalform::NormalForm)
         ylabel="Payoff Player 2"
     )
 end
-
-#= TO DO:
-- see what else to do
-- integrate into main file/branch =#
