@@ -89,19 +89,11 @@ function plotCorrelated!(p,normalform::NormalForm)
     p=plot!(
         p,
         CorrEquilibriumPayoffs(normalform),
-        title="Correlated Equilibria Payoffs",
-        xlabel="Payoff Player 1",
-        ylabel="Payoff Player 2",
-        label="Correlated equilibrium payoffs"
+        label="Correlated eq."
     )
 end
 
 function plotCorrelated(normalform::NormalForm)
-    p=plot(
-        CorrEquilibriumPayoffs(normalform),
-        title="Correlated Equilibria Payoffs",
-        xlabel="Payoff Player 1",
-        ylabel="Payoff Player 2",
-        label="Correlated equilibrium payoffs"
-    )
+    p=newplot2()
+    p=plotCorrelated!(p,normalform)
 end

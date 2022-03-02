@@ -8,7 +8,7 @@ using LazySets, Optim, Plots, Polyhedra
 import LinearAlgebra: I
 # import GLMakie # Needs to be activated to run 3D plots. Doesn't run with binder
 
-export NormalForm, randomNormalForm, plotall2, plotFeasible3, miniMaxProfile
+export NormalForm, randomNormalForm, plotall2, plotFeasible3, miniMaxProfile, plotFeasible2!, plotFeasible2, plotIR_Set2!
 
 # STRUCTURE AND CONSTRUCTORS:
 
@@ -119,7 +119,8 @@ function newplot2()
     p=plot(
         xlabel="Payoff player 1",
         ylabel="Payoff player 2",
-        title="Normal Form Payoffs"
+        title="Normal Form Payoffs",
+        legend = :outerright
     )
 end
 
