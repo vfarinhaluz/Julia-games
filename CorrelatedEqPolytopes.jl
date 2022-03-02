@@ -1,6 +1,6 @@
 # Uses LazySets to calculate correlated equilibria payoffs (to be added to main module)
 
-export plotCorrelated, CorrEquilibriumPayoffs
+export plotCorrelated, CorrEquilibriumPayoffs, plotCorrelated!
 
 struct SetofActionDistributions
     S::LazySet{N} where N
@@ -85,11 +85,23 @@ end
 
 # PLOTTING
 
+function plotCorrelated!(p,normalform::NormalForm)
+    p=plot!(
+        p,
+        CorrEquilibriumPayoffs(normalform),
+        title="Correlated Equilibria Payoffs",
+        xlabel="Payoff Player 1",
+        ylabel="Payoff Player 2",
+        label="Correlated equilibrium payoffs"
+    )
+end
+
 function plotCorrelated(normalform::NormalForm)
     p=plot(
         CorrEquilibriumPayoffs(normalform),
         title="Correlated Equilibria Payoffs",
         xlabel="Payoff Player 1",
-        ylabel="Payoff Player 2"
+        ylabel="Payoff Player 2",
+        label="Correlated equilibrium payoffs"
     )
 end
