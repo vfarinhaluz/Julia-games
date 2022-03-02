@@ -7,14 +7,16 @@
 - linear projection
 - plot
  =#
- using LazySets, Plots, LinearAlgebra
+
+
+export plotCorrelated, CorrEquilibriumPayoffs
 
 struct SetofActionDistributions
     S::LazySet{N} where N
     normalform::NormalForm
 
     function SetofActionDistributions(S::LazySet{N} where N, normalform::NormalForm)
-        dim(S)==prod(normalform.nMoves) ? new(S, normalform) : error("Inputs with incompatible dimensions.")
+        LazySets.dim(S)==prod(normalform.nMoves) ? new(S, normalform) : error("Inputs with incompatible dimensions.")
     end
 
 end
@@ -42,7 +44,7 @@ function polyhedronIC_1(normalform::NormalForm)
         for i in 1:normalform.nMoves[1], j in 1:normalform.nMoves[1]
     ]
 
-    halfSpaceVector=HalfSpace.(
+    halfSpaceVector=LazySets.HalfSpace.(
         arrayOfHalfspacesDeviation[ findall(!iszero, arrayOfHalfspacesDeviation) ],
         0.
     )
@@ -65,7 +67,7 @@ function polyhedronIC_2(normalform::NormalForm)
         for i in 1:normalform.nMoves[2], j in 1:normalform.nMoves[2]
     ]
 
-    halfSpaceVector=HalfSpace.(
+    halfSpaceVector=LazySets.HalfSpace.(
         arrayOfHalfspacesDeviation[ findall(!iszero, arrayOfHalfspacesDeviation) ],
         0.
     )
