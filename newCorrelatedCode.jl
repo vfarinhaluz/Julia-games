@@ -103,9 +103,5 @@ function plotCorrelated(normalform::NormalForm)
 end
 
 #= TO DO:
-- Complete matrix to check deviations of player 1
-- construct matrices to check deviation for player 2
-- Construct respective polyhedra
-- Build intersection
-- projection in 2 dim
-- Plot =#
+- see what else to do
+- integrate into main file/branch =#
