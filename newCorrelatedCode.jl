@@ -54,7 +54,7 @@ end
 function matrixCalcPayoff2(recommended::Int64, deviation::Int64, normalform::NormalForm)
     payoff2=normalform.payoffMatList[2]
     swapedMat = [
-                            (i[2]==recommended).*payoff2[deviation,i[1]] for i in CartesianIndices(payoff2)
+                            (i[2]==recommended).*payoff2[i[1],deviation] for i in CartesianIndices(payoff2)
     ]
     return swapedMat[:]
 end
@@ -73,7 +73,7 @@ function polyhedronIC_2(normalform::NormalForm)
 end
 
 
-### Correlated Equilibrium polytope
+### Correlated Equilibrium polytopes
 
 function CorrEqPolytope(normalform::NormalForm)
     probSet=PolyhedronProbConstraints(normalform).S
@@ -88,8 +88,18 @@ function CorrEquilibriumPayoffs(normalform::NormalForm)
         normalform.payoffMatList[1][:]';
         normalform.payoffMatList[2][:]'
     ]
-
     return payoffMat * CorrEqPolytope(normalform::NormalForm).S
+end
+
+# PLOTTING
+
+function plotCorrelated(normalform::NormalForm)
+    p=plot(
+        CorrEquilibriumPayoffs(normalform),
+        title="Correlated Equilibria Payoffs",
+        xlabel="Payoff Player 1",
+        ylabel="Payoff Player 2"
+    )
 end
 
 #= TO DO:
