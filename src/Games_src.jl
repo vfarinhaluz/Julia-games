@@ -6,7 +6,7 @@ module NormalForms
 
 using LazySets, Optim, Plots, Polyhedra
 import LinearAlgebra: I
-# import GLMakie # Needs to be activated to run 3D plots. Doesn't run with binder
+import GLMakie # Needs to be activated to run 3D plots. Doesn't run with binder
 
 export NormalForm, randomNormalForm, plotall2, plotFeasible3, miniMaxProfile, plotFeasible2!, plotFeasible2, plotIR_Set2!
 
