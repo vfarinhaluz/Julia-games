@@ -170,6 +170,15 @@ function plotMinimax2!(p::Plots.Plot, normalform::NormalForm)
     );
 end
 
+function plotMinimaxIR(normalform::NormalForm)
+    mm=miniMaxProfile(normalform)
+    p=newplot2()
+    plotMinimax2!(p,normalform)
+    plotIR_Set2!(p,normalform)
+    # display(p)
+    return p
+end
+
 function plotall2(normalform::NormalForm)
     p=newplot2()
     plotFeasible2!(p,normalform)
