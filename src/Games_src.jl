@@ -8,7 +8,7 @@ using LazySets, Optim, Plots, Polyhedra
 import LinearAlgebra: I
 # import GLMakie # Needs to be activated to run 3D plots. Doesn't run with binder
 
-export NormalForm, randomNormalForm, plotall2, plotFeasible3, miniMaxProfile, plotFeasible2!, plotFeasible2, plotIR_Set2!
+export NormalForm, randomNormalForm, plotall2, plotFeasible3, miniMaxProfile, plotFeasible2!, plotFeasible2, plotMinimaxIR
 
 # STRUCTURE AND CONSTRUCTORS:
 
@@ -172,8 +172,9 @@ end
 function plotMinimaxIR(normalform::NormalForm)
     mm=miniMaxProfile(normalform)
     p=newplot2()
-    plotMinimax2!(p,normalform)
     plotIR_Set2!(p,normalform)
+    plotMinimax2!(p,normalform)
+    plot!(p, xlims = (mm[1] - 1, mm[1] + 1), ylims = (mm[2] - 1, mm[2] + 1) )
     # display(p)
     return p
 end
