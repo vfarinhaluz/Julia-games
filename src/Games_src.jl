@@ -8,7 +8,7 @@ using LazySets, Optim, Plots, Polyhedra
 import LinearAlgebra: I
 # import GLMakie # Needs to be activated to run 3D plots. Doesn't run with binder
 
-export NormalForm, randomNormalForm, plotall2, plotFeasible3, miniMaxProfile, plotFeasible2!, plotFeasible2, plotIR_Set2!
+export NormalForm, randomNormalForm, plotall2, plotFeasible3, miniMaxProfile, plotFeasible2!, plotFeasible2, plotMinimaxIR
 
 # STRUCTURE AND CONSTRUCTORS:
 
@@ -169,6 +169,16 @@ function plotMinimax2!(p::Plots.Plot, normalform::NormalForm)
     );
 end
 
+function plotMinimaxIR(normalform::NormalForm)
+    mm=miniMaxProfile(normalform)
+    p=newplot2()
+    plotIR_Set2!(p,normalform)
+    plotMinimax2!(p,normalform)
+    plot!(p, xlims = (mm[1] - 1, mm[1] + 1), ylims = (mm[2] - 1, mm[2] + 1) )
+    # display(p)
+    return p
+end
+
 function plotall2(normalform::NormalForm)
     p=newplot2()
     plotFeasible2!(p,normalform)
@@ -176,6 +186,23 @@ function plotall2(normalform::NormalForm)
     plotMinimax2!(p,normalform)
     # display(p)
     return p
+end
+
+function plotPurePayoffs!(p::Plots.Plot, normalform::NormalForm)
+    payoff1=normalform.payoffMatList[1]
+    payoff2=normalform.payoffMatList[2]
+    
+    payoff_points=[
+        Vector{Float64}( [payoff1[i], payoff2[i]] )
+        for i in eachindex(payoff1)
+    ]
+    
+    Plots.scatter!(p,
+    [payoff_points[i][1] for i in eachindex(payoff_points)],
+    [payoff_points[i][2] for i in eachindex(payoff_points)],
+    label="Pure payoffs",
+    color=:red
+    );
 end
 
 function plotFeasible3(normalform::NormalForm)
