@@ -156,8 +156,7 @@ function plotIR_Set2!(p::Plots.Plot, normalform::NormalForm)
     plot!(
         p,
         greaterThanSet( miniMaxProfile(normalform) ),
-        label="IR Set",
-        legend=:bottomleft
+        label="IR Set"
     )
 end
 
