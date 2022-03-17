@@ -188,6 +188,23 @@ function plotall2(normalform::NormalForm)
     return p
 end
 
+function plotPurePayoffs!(p::Plots.Plot, normalform::NormalForm)
+    payoff1=normalform.payoffMatList[1]
+    payoff2=normalform.payoffMatList[2]
+    
+    payoff_points=[
+        Vector{Float64}( [payoff1[i], payoff2[i]] )
+        for i in eachindex(payoff1)
+    ]
+    
+    Plots.scatter!(p,
+    [payoff_points[i][1] for i in eachindex(payoff_points)],
+    [payoff_points[i][2] for i in eachindex(payoff_points)],
+    label="Pure payoffs",
+    color=:red
+    );
+end
+
 function plotFeasible3(normalform::NormalForm)
     payoff1=normalform.payoffMatList[1]
     mm=miniMaxProfile(normalform)
