@@ -8,7 +8,7 @@ using LazySets, Optim, Plots, Polyhedra
 import LinearAlgebra: I
 import GLMakie # Needs to be activated to run 3D plots. Doesn't run with binder
 
-export NormalForm, randomNormalForm, plotall2, plotFeasible3, miniMaxProfile, plotFeasible2!, plotFeasible2, plotIR_Set2!
+export NormalForm, randomNormalForm, plotall2, plotFeasible3, miniMaxProfile, plotFeasible2!, plotFeasible2, plotMinimaxIR
 
 # STRUCTURE AND CONSTRUCTORS:
 
@@ -16,10 +16,11 @@ struct NormalForm
     nPlayers::Int64
     nMoves::Tuple{Vararg{Int64}}    
     payoffMatList::Tuple{ Vararg{ Array{<:Real} } }
+    name::String
 
-    function NormalForm(players, nmoves, payofflist)
+    function NormalForm(players, nmoves, payofflist, name::String="")
         if size(payofflist[1])==nmoves && players==ndims(payofflist[1])
-            new(players, nmoves, payofflist)
+            new(players, nmoves, payofflist, name)
         else
             error("Violates dimension requirements for NormalForm.")
         end
@@ -27,7 +28,7 @@ struct NormalForm
 
 end
 
-function NormalForm(normalFormTable::Array{<:Tuple})
+function NormalForm(normalFormTable::Array{<:Tuple}, name::String="")
     nplayers=ndims(normalFormTable)
     nmoves=size(normalFormTable)
 
@@ -36,13 +37,13 @@ function NormalForm(normalFormTable::Array{<:Tuple})
         nplayers
     )
 
-    return NormalForm(nplayers, nmoves, payoffmatlist)
+    return NormalForm(nplayers, nmoves, payoffmatlist, name)
 end
 
-function randomNormalForm(nMovesList::Tuple{Vararg{<:Real}})
+function randomNormalForm(nMovesList::Tuple{Vararg{<:Real}}, name::String="Random")
     nplayers=length(nMovesList)
     payoffmatlist= Tuple(rand(Float64, nMovesList) for i in 1:nplayers)
-    nform=NormalForm(nplayers, nMovesList, payoffmatlist);
+    nform=NormalForm(nplayers, nMovesList, payoffmatlist, name);
     display("The payoff table(s) for the random game is:")
     display(
     [
@@ -115,11 +116,12 @@ end
 
 #PLOTTING
 
-function newplot2()
+function newplot2(nf::Union{NormalForm, Bool}=false)
+    name = (nf==false || nf.name=="") ? "" : " - "*nf.name
     p=plot(
         xlabel="Payoff player 1",
         ylabel="Payoff player 2",
-        title="Normal Form Payoffs",
+        title="Normal Form Payoffs"*name,
         legend = :outerright
     )
 end
@@ -146,9 +148,8 @@ function plotFeasible2!(p,normalform::NormalForm)
 end
 
 function plotFeasible2(normalform::NormalForm)
-    p=newplot2()
+    p=newplot2(normalform)
     plotFeasible2!(p,normalform)
-    display(p)
     return p
 end
 
@@ -169,13 +170,38 @@ function plotMinimax2!(p::Plots.Plot, normalform::NormalForm)
     );
 end
 
+function plotMinimaxIR(normalform::NormalForm)
+    mm=miniMaxProfile(normalform)
+    p=newplot2(normalform)
+    plotIR_Set2!(p,normalform)
+    plotMinimax2!(p,normalform)
+    plot!(p, xlims = (mm[1] - 1, mm[1] + 1), ylims = (mm[2] - 1, mm[2] + 1) )
+    return p
+end
+
 function plotall2(normalform::NormalForm)
-    p=newplot2()
+    p=newplot2(normalform)
     plotFeasible2!(p,normalform)
     plotIR_Set2!(p,normalform)
     plotMinimax2!(p,normalform)
-    # display(p)
     return p
+end
+
+function plotPurePayoffs!(p::Plots.Plot, normalform::NormalForm)
+    payoff1=normalform.payoffMatList[1]
+    payoff2=normalform.payoffMatList[2]
+    
+    payoff_points=[
+        Vector{Float64}( [payoff1[i], payoff2[i]] )
+        for i in eachindex(payoff1)
+    ]
+    
+    Plots.scatter!(p,
+    [payoff_points[i][1] for i in eachindex(payoff_points)],
+    [payoff_points[i][2] for i in eachindex(payoff_points)],
+    label="Pure payoffs",
+    color=:red
+    );
 end
 
 function plotFeasible3(normalform::NormalForm)

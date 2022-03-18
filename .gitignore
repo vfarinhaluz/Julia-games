@@ -3,3 +3,5 @@ test/
 .DS_Store
 test.jl
 *.pdf
+test/
+.vscode/

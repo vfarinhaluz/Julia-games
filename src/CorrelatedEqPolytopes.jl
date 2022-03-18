@@ -94,6 +94,6 @@ function plotCorrelated!(p,normalform::NormalForm)
 end
 
 function plotCorrelated(normalform::NormalForm)
-    p=newplot2()
+    p=newplot2(normalform)
     p=plotCorrelated!(p,normalform)
 end
