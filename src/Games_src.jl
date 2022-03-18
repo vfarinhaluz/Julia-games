@@ -170,6 +170,15 @@ function plotMinimax2!(p::Plots.Plot, normalform::NormalForm)
     );
 end
 
+function plotPureMinimax2!(p::Plots.Plot, normalform::NormalForm)
+    mm=pureMinMax2(normalform)
+    Plots.scatter!(p,
+        [mm[1]],
+        [mm[2]],
+        label="Pure Minimax"
+    );
+end
+
 function plotMinimaxIR(normalform::NormalForm)
     mm=miniMaxProfile(normalform)
     p=newplot2(normalform)
