@@ -150,7 +150,6 @@ end
 function plotFeasible2(normalform::NormalForm)
     p=newplot2(normalform)
     plotFeasible2!(p,normalform)
-    display(p)
     return p
 end
 
@@ -177,7 +176,6 @@ function plotMinimaxIR(normalform::NormalForm)
     plotIR_Set2!(p,normalform)
     plotMinimax2!(p,normalform)
     plot!(p, xlims = (mm[1] - 1, mm[1] + 1), ylims = (mm[2] - 1, mm[2] + 1) )
-    # display(p)
     return p
 end
 
@@ -186,7 +184,6 @@ function plotall2(normalform::NormalForm)
     plotFeasible2!(p,normalform)
     plotIR_Set2!(p,normalform)
     plotMinimax2!(p,normalform)
-    # display(p)
     return p
 end
 
