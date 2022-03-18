@@ -16,10 +16,11 @@ struct NormalForm
     nPlayers::Int64
     nMoves::Tuple{Vararg{Int64}}    
     payoffMatList::Tuple{ Vararg{ Array{<:Real} } }
+    name::String
 
-    function NormalForm(players, nmoves, payofflist)
+    function NormalForm(players, nmoves, payofflist, name::String="")
         if size(payofflist[1])==nmoves && players==ndims(payofflist[1])
-            new(players, nmoves, payofflist)
+            new(players, nmoves, payofflist, name)
         else
             error("Violates dimension requirements for NormalForm.")
         end
@@ -27,7 +28,7 @@ struct NormalForm
 
 end
 
-function NormalForm(normalFormTable::Array{<:Tuple})
+function NormalForm(normalFormTable::Array{<:Tuple}, name::String="")
     nplayers=ndims(normalFormTable)
     nmoves=size(normalFormTable)
 
@@ -36,13 +37,13 @@ function NormalForm(normalFormTable::Array{<:Tuple})
         nplayers
     )
 
-    return NormalForm(nplayers, nmoves, payoffmatlist)
+    return NormalForm(nplayers, nmoves, payoffmatlist, name)
 end
 
-function randomNormalForm(nMovesList::Tuple{Vararg{<:Real}})
+function randomNormalForm(nMovesList::Tuple{Vararg{<:Real}}, name::String="Random")
     nplayers=length(nMovesList)
     payoffmatlist= Tuple(rand(Float64, nMovesList) for i in 1:nplayers)
-    nform=NormalForm(nplayers, nMovesList, payoffmatlist);
+    nform=NormalForm(nplayers, nMovesList, payoffmatlist, name);
     display("The payoff table(s) for the random game is:")
     display(
     [
@@ -115,11 +116,12 @@ end
 
 #PLOTTING
 
-function newplot2()
+function newplot2(nf::Union{NormalForm, Bool}=false)
+    name = (nf==false || nf.name=="") ? "" : " - "*nf.name
     p=plot(
         xlabel="Payoff player 1",
         ylabel="Payoff player 2",
-        title="Normal Form Payoffs",
+        title="Normal Form Payoffs"*name,
         legend = :outerright
     )
 end
@@ -146,9 +148,8 @@ function plotFeasible2!(p,normalform::NormalForm)
 end
 
 function plotFeasible2(normalform::NormalForm)
-    p=newplot2()
+    p=newplot2(normalform)
     plotFeasible2!(p,normalform)
-    display(p)
     return p
 end
 
@@ -171,20 +172,18 @@ end
 
 function plotMinimaxIR(normalform::NormalForm)
     mm=miniMaxProfile(normalform)
-    p=newplot2()
+    p=newplot2(normalform)
     plotIR_Set2!(p,normalform)
     plotMinimax2!(p,normalform)
     plot!(p, xlims = (mm[1] - 1, mm[1] + 1), ylims = (mm[2] - 1, mm[2] + 1) )
-    # display(p)
     return p
 end
 
 function plotall2(normalform::NormalForm)
-    p=newplot2()
+    p=newplot2(normalform)
     plotFeasible2!(p,normalform)
     plotIR_Set2!(p,normalform)
     plotMinimax2!(p,normalform)
-    # display(p)
     return p
 end
 
