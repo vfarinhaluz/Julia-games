@@ -94,8 +94,13 @@ function miniMax_i(normalform::NormalForm, player::Int64)
     obj(z) = uBR_i(parametrize_mix(z))
 
     z0=zeros( prod(normalform.nMoves) ÷ normalform.nMoves[player])
-    solution=optimize(obj, z0)
-    return solution.minimum
+    solution=optimize(obj, z0, iterations=10^5)
+
+    if Optim.converged(solution) 
+        return minimum(solution) 
+    else 
+        return error("Minimax optimization for player $player not solved. Maybe increase number of max interations?")
+    end
 end
 
 function miniMaxProfile(normalform::NormalForm, verbose::Bool =false)
