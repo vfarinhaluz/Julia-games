@@ -20,9 +20,9 @@ struct NormalForm
 
     function NormalForm(players, nmoves, payofflist, name::String="")
         if size(payofflist[1])==nmoves && players==ndims(payofflist[1])
-            new(players, nmoves, payofflist, name)
+            new(players, nmoves, payofflist, name);
         else
-            error("Violates dimension requirements for NormalForm.")
+            error("Violates dimension requirements for NormalForm.");
         end
     end
 
@@ -37,25 +37,35 @@ function NormalForm(normalFormTable::Array{<:Tuple}, name::String="")
         nplayers
     )
 
-    return NormalForm(nplayers, nmoves, payoffmatlist, name)
+    return NormalForm(nplayers, nmoves, payoffmatlist, name);
 end
 
 function randomNormalForm(nMovesList::Tuple{Vararg{<:Real}}, name::String="Random")
     nplayers=length(nMovesList)
     payoffmatlist= Tuple(rand(Float64, nMovesList) for i in 1:nplayers)
     nform=NormalForm(nplayers, nMovesList, payoffmatlist, name);
-    display("The payoff table(s) for the random game is:")
-    display(
-    [
-    round.(
-    Tuple(nform.payoffMatList[k][i] for k in 1:nform.nPlayers),
-    digits=2)
-    for i in CartesianIndices(nform.payoffMatList[1])
-    ],
-    )
+    # display("The payoff table(s) for the random game is:")
+    # display(
+    # [
+    # round.(
+    # Tuple(nform.payoffMatList[k][i] for k in 1:nform.nPlayers),
+    # digits=2)
+    # for i in CartesianIndices(nform.payoffMatList[1])
+    # ],
+    # )
     return nform;
 end
 
+function Base.show(io::IO, nf::NormalForm)
+    println(io, "Normal form game with ",nf.nPlayers, " players. \n")
+
+    for i in 1:nf.nPlayers
+        println(io, "Player ", i , " has ", nf.nMoves[i], " actions and payoffs given by: \n")
+        show(io, "text/plain", nf.payoffMatList[i])
+        println("\n")
+    end
+    #  nf.nPlayers[i]
+end
 #CALCULATING VALUES
 
 function pureMinMax2(normalform::NormalForm)
