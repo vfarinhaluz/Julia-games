@@ -20,9 +20,9 @@ struct NormalForm
 
     function NormalForm(players, nmoves, payofflist, name::String="")
         if size(payofflist[1])==nmoves && players==ndims(payofflist[1])
-            new(players, nmoves, payofflist, name);
+            new(players, nmoves, payofflist, name)
         else
-            error("Violates dimension requirements for NormalForm.");
+            error("Violates dimension requirements for NormalForm.")
         end
     end
 
@@ -37,7 +37,7 @@ function NormalForm(normalFormTable::Array{<:Tuple}, name::String="")
         nplayers
     )
 
-    return NormalForm(nplayers, nmoves, payoffmatlist, name);
+    return NormalForm(nplayers, nmoves, payoffmatlist, name)
 end
 
 function randomNormalForm(nMovesList::Tuple{Vararg{<:Real}}, name::String="Random")
@@ -58,13 +58,11 @@ end
 
 function Base.show(io::IO, nf::NormalForm)
     println(io, "Normal form game with ",nf.nPlayers, " players. \n")
-
     for i in 1:nf.nPlayers
         println(io, "Player ", i , " has ", nf.nMoves[i], " actions and payoffs given by: \n")
         show(io, "text/plain", nf.payoffMatList[i])
-        println("\n")
+        i==nf.nPlayers ? nothing : println("\n")
     end
-    #  nf.nPlayers[i]
 end
 #CALCULATING VALUES
 
