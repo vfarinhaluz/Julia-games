@@ -44,18 +44,17 @@ function randomNormalForm(nMovesList::Tuple{Vararg{<:Real}}, name::String="Rando
     nplayers=length(nMovesList)
     payoffmatlist= Tuple(rand(Float64, nMovesList) for i in 1:nplayers)
     nform=NormalForm(nplayers, nMovesList, payoffmatlist, name);
-    display("The payoff table(s) for the random game is:")
-    display(
-    [
-    round.(
-    Tuple(nform.payoffMatList[k][i] for k in 1:nform.nPlayers),
-    digits=2)
-    for i in CartesianIndices(nform.payoffMatList[1])
-    ],
-    )
     return nform;
 end
 
+function Base.show(io::IO, nf::NormalForm)
+    println(io, "Normal form game with ",nf.nPlayers, " players. \n")
+    for i in 1:nf.nPlayers
+        println(io, "Player ", i , " has ", nf.nMoves[i], " actions and payoffs given by: \n")
+        show(io, "text/plain", nf.payoffMatList[i])
+        i==nf.nPlayers ? nothing : println("\n")
+    end
+end
 #CALCULATING VALUES
 
 function pureMinMax2(normalform::NormalForm)
