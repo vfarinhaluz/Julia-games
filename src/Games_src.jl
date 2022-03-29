@@ -44,18 +44,17 @@ function randomNormalForm(nMovesList::Tuple{Vararg{<:Real}}, name::String="Rando
     nplayers=length(nMovesList)
     payoffmatlist= Tuple(rand(Float64, nMovesList) for i in 1:nplayers)
     nform=NormalForm(nplayers, nMovesList, payoffmatlist, name);
-    display("The payoff table(s) for the random game is:")
-    display(
-    [
-    round.(
-    Tuple(nform.payoffMatList[k][i] for k in 1:nform.nPlayers),
-    digits=2)
-    for i in CartesianIndices(nform.payoffMatList[1])
-    ],
-    )
     return nform;
 end
 
+function Base.show(io::IO, nf::NormalForm)
+    println(io, "Normal form game with ",nf.nPlayers, " players. \n")
+    for i in 1:nf.nPlayers
+        println(io, "Player ", i , " has ", nf.nMoves[i], " actions and payoffs given by: \n")
+        show(io, "text/plain", nf.payoffMatList[i])
+        i==nf.nPlayers ? nothing : println("\n")
+    end
+end
 #CALCULATING VALUES
 
 function pureMinMax2(normalform::NormalForm)
@@ -94,8 +93,13 @@ function miniMax_i(normalform::NormalForm, player::Int64)
     obj(z) = uBR_i(parametrize_mix(z))
 
     z0=zeros( prod(normalform.nMoves) ÷ normalform.nMoves[player])
-    solution=optimize(obj, z0)
-    return solution.minimum
+    solution=optimize(obj, z0, iterations=10^5)
+
+    if Optim.converged(solution) 
+        return minimum(solution) 
+    else 
+        return error("Minimax optimization for player $player not solved. Maybe increase number of max interations?")
+    end
 end
 
 function miniMaxProfile(normalform::NormalForm, verbose::Bool =false)
@@ -167,6 +171,15 @@ function plotMinimax2!(p::Plots.Plot, normalform::NormalForm)
         [mm[1]],
         [mm[2]],
         label="Minimax"
+    );
+end
+
+function plotPureMinimax2!(p::Plots.Plot, normalform::NormalForm)
+    mm=pureMinMax2(normalform)
+    Plots.scatter!(p,
+        [mm[1]],
+        [mm[2]],
+        label="Pure Minimax"
     );
 end
 
